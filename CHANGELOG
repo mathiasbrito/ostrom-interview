@@ -1,0 +1,8 @@
+# Changelog
+Historical changes on the system.
+
+## [0.1] - 2021-02-09
+### Added
+- Exposes an API to calculate the tariff of a user based on its
+location and historical consumption data.
+- Loads providers data from CSV file.
