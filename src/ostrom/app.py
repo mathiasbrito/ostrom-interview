@@ -4,7 +4,6 @@ import uvicorn
 from fastapi import FastAPI
 from ostrom.routers import tariff_router
 
-
 port = int(os.environ.get('PORT', '8001'))
 
 api = FastAPI()

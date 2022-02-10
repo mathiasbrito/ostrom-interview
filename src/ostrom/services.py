@@ -39,6 +39,9 @@ class ProviderPricesService:
     def get_providers_prices(self):
         return self._provider_prices
 
+    def add_location_price(self, location_price: LocationPrice):
+        self._provider_prices.append(location_price)
+
 
 class PriceCalculatorService:
 
@@ -98,7 +101,9 @@ class LocationAddressMatchMaker:
         return matches
 
 
-csv_file = os.path.join(os.path.dirname(__file__), 'location_prices.csv')
+csv_file = os.path.join(os.path.dirname(__file__), 'data/location_prices.csv')
+if os.environ.get('OSTROM_ENV', 'DEVELOPMENT'):
+    csv_file = os.path.join(os.path.dirname(__file__), 'data/location_prices_small.csv')
 provider_prices_service = ProviderPricesService()
 provider_prices_service.load_location_prices_from_csv(csv_file)
 price_calculator_service = PriceCalculatorService(provider_prices_service)

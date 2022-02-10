@@ -1,8 +1,3 @@
-import math
-
-import pytest
-
-from ostrom.domain import UserAddress
 from ostrom.services import ProviderPricesService, PriceCalculatorService
 
 from pytest import fixture
@@ -34,36 +29,12 @@ class TestProviderPricesService:
 
 class TestPriceCalculatorService:
 
-    # 16932,Börgelingstadt,Am Neuenhof,4-10,1.76,4.15,0.67
-    # 1.76 + 4.15 + (0.67 * 1500)
-    consumer1 = UserAddress(
-        postal_code=16932,
-        city='Börgelingstadt',
-        street='Am Neuenhof',
-        house_number=5,
-        yearly_kwh_consumption=1500
-    )
+    def test_calculate_price_one_match(self, consumer1, price_calculator):
+        price = price_calculator.calculate_price(consumer1)
+        assert price.total_price == 1010.9100000000001
 
-    # postal_code,city,street,house_number,unit_price,grid_fees,kwh_price
-    # 01847,Eliahscheid,Alt Steinbücheler Weg,814-849,4.79,3.19,0.45
-    # ((4.79+3.19+(0.45*1000)) + (4.79+3.19+(0.30*1000)))/2 = 382.98
-    consumer2 = UserAddress(
-        postal_code=int('01847'),
-        city='Eliahscheid',
-        house_number=816,
-        street='Alt Steinbücheler Weg',
-        yearly_kwh_consumption=1000
-    )
-
-    @pytest.mark.parametrize('consumer, expected_price', [(consumer1, 1010.9100000000001)])
-    def test_calculate_price_one_match(self, consumer, expected_price, price_calculator):
-
-        price = price_calculator.calculate_price(consumer)
-        assert price.total_price == expected_price, 2
-
-    @pytest.mark.parametrize('consumer, expected_price', [(consumer2, 382.98)])
-    def test_calculate_price_two_matches(self,  consumer, expected_price, price_calculator):
-        price = price_calculator.calculate_price(consumer)
-        assert price.total_price == expected_price
+    def test_calculate_price_two_matches(self,  consumer2,  price_calculator):
+        price = price_calculator.calculate_price(consumer2)
+        assert price.total_price == 382.98
 
 
