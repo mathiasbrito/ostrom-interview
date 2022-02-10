@@ -24,7 +24,7 @@ class TestProviderPricesService:
 
     def test_load_prices_from_csv_local_file(self, provider_prices_service, location_prices_small_file_path):
         provider_prices_service.load_prices_from_csv_local_file(location_prices_small_file_path)
-        assert len(provider_prices_service.get_providers_prices()) == 18
+        assert provider_prices_service.get_providers_prices().number_of_entries() == 18
 
 
 class TestPriceCalculatorService:
