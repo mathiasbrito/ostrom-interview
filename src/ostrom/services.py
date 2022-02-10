@@ -7,25 +7,25 @@ from ostrom.domain import LocationPrice, UserAddress, Tariff
 
 class ProviderPricesStore:
 
-    provider_prices: Dict[int, List[LocationPrice]]
+    _provider_prices: Dict[int, List[LocationPrice]]
 
     def __init__(self):
-        self.provider_prices = dict()
+        self._provider_prices = dict()
 
     def add(self, location_price: LocationPrice):
-        values = self.provider_prices.get(location_price.postal_code)
+        values = self._provider_prices.get(location_price.postal_code)
         if not values:
             values = list([location_price])
-            self.provider_prices[location_price.postal_code] = values
+            self._provider_prices[location_price.postal_code] = values
         else:
             values.append(location_price)
 
-    def get_prices_by_postal_code(self, postal_code: int):
-        return self.provider_prices.get(postal_code, list())
+    def get_location_prices_by_postal_code(self, postal_code: int):
+        return self._provider_prices.get(postal_code, list())
 
     def number_of_entries(self):
         sum_ = 0
-        for list_same_postal_codes in self.provider_prices.values():
+        for list_same_postal_codes in self._provider_prices.values():
             sum_ += len(list_same_postal_codes)
 
         return sum_
@@ -70,7 +70,8 @@ class ProviderPricesService:
 
 
 class NoLocationPriceError(Exception):
-    pass
+    def __init__(self, message):
+        self.message = message
 
 
 class PriceCalculatorService:
@@ -82,7 +83,7 @@ class PriceCalculatorService:
 
     def calculate_price(self, consumer_address: UserAddress):
         provider_prices = provider_prices_service.get_providers_prices()
-        matches = provider_prices.get_prices_by_postal_code(consumer_address.postal_code)
+        matches = provider_prices.get_location_prices_by_postal_code(consumer_address.postal_code)
         number_of_matches = len(matches)
 
         if number_of_matches == 1:

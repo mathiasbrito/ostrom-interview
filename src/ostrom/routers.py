@@ -1,17 +1,22 @@
-from fastapi import APIRouter, File
+from fastapi import APIRouter, Response, status
+from fastapi.exceptions import HTTPException
 
 from ostrom.domain import UserAddress, LocationPrice
-from ostrom.services import provider_prices_service, price_calculator_service
+from ostrom.services import provider_prices_service, price_calculator_service, NoLocationPriceError
 
 tariff_router = APIRouter()
 
 
 @tariff_router.post('/prices')
-def prices(location_price: LocationPrice):
+async def prices(location_price: LocationPrice):
     provider_prices_service.add_location_price(location_price)
 
 
 @tariff_router.post('/tariffs')
-def tariff(user_consumption: UserAddress):
-    return price_calculator_service.calculate_price(user_consumption)
+async def tariff(user_consumption: UserAddress, response: Response):
+    try:
+        return price_calculator_service.calculate_price(user_consumption)
+    except NoLocationPriceError as e:
+        response.status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
+        return {'error': f'{e.message}'}
 

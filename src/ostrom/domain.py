@@ -30,9 +30,6 @@ class LocationPrice(BaseModel):
     grid_fees: float
     kwh_price: float
 
-    _start_number: int
-    _end_number: int
-
     def get_range(self) -> (int, int):
         a, b = self.house_number.split('-')
         return int(a), int(b)
