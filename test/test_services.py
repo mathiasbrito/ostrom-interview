@@ -21,7 +21,7 @@ def provider_prices_service_populated(location_prices_small_file_path, entries_f
 
 @fixture(scope='function')
 def price_calculator(provider_prices_service_populated, entries_for_testing):
-        yield PriceCalculatorService(provider_prices_service_populated)
+    yield PriceCalculatorService(provider_prices_service_populated)
 
 
 @fixture(scope='function')

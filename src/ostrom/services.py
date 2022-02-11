@@ -83,11 +83,12 @@ class PriceCalculatorService:
 
     def calculate_price(self, consumer_address: UserAddress):
         provider_prices = provider_prices_service.get_providers_prices()
-        matches = provider_prices.get_location_prices_by_postal_code(consumer_address.postal_code)
-        number_of_matches = len(matches)
+        matches_by_postal_code = provider_prices.get_location_prices_by_postal_code(consumer_address.postal_code)
+        full_matches = LocationAddressMatchMaker.all_matches(matches_by_postal_code, consumer_address)
+        number_of_matches = len(full_matches)
 
         if number_of_matches == 1:
-            match = matches[0]
+            match = full_matches[0]
             return Tariff(
                 unit_price=match.unit_price,
                 grid_fees=match.grid_fees,
@@ -95,7 +96,7 @@ class PriceCalculatorService:
                 total_price=self.calculate_per_location_price(match, consumer_address.yearly_kwh_consumption)
             )
         elif number_of_matches > 1:
-            return self.get_tariff_from_mean(consumer_address, matches)
+            return self.get_tariff_from_mean(consumer_address, full_matches)
         else:
             raise NoLocationPriceError('No tariff found for the given location')
 
@@ -148,8 +149,8 @@ class LocationAddressMatchMaker:
         return matches
 
 
-csv_file = os.path.join(os.path.dirname(__file__), '../../test/location_prices.csv')
-if os.environ.get('OSTROM_ENV', 'DEVELOPMENT'):
+csv_file = os.path.join(os.path.dirname(__file__), 'data/location_prices.csv')
+if os.environ.get('OSTROM_ENV') == 'DEVELOPMENT':
     csv_file = os.path.join(os.path.dirname(__file__), 'data/location_prices_small.csv')
 provider_prices_service = ProviderPricesService()
 provider_prices_service.load_location_prices_from_csv(csv_file)
