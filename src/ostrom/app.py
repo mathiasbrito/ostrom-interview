@@ -5,7 +5,7 @@ from fastapi import FastAPI
 
 from ostrom.routers import tariff_router
 
-port = int(os.environ.get('PORT', '8001'))
+port = int(os.environ.get('PORT', '8000'))
 
 api = FastAPI()
 api.include_router(tariff_router)

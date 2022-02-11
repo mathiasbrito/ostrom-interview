@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Response, status
-from fastapi.exceptions import HTTPException
 
 from ostrom.domain import UserAddress, LocationPrice
 from ostrom.services import provider_prices_service, price_calculator_service, NoLocationPriceError
@@ -18,5 +17,3 @@ async def tariff(user_consumption: UserAddress, response: Response):
         return price_calculator_service.calculate_price(user_consumption)
     except NoLocationPriceError as e:
         response.status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
-        return {'error': f'{e.message}'}
-

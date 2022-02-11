@@ -26,6 +26,12 @@ After the installation run with:
 $ ostrom
 ```
 
+The system can take some time to load, since it is loading the `Location Prices`
+file, which is a relatively big file.
+
+If you set the environment variable `OSTROM_ENV` to the value `DEVELOPMENT`
+the system will load a reduced set of the `Location Prices` file.
+
 ### Run with Docker
 
 - Build the image with `docker build -t ostrom .`
@@ -41,6 +47,16 @@ $ ostrom
     $ git commit -am "Ostrom at Heroky"
     $ git push heroku trunk:master
     ```
+### Testing 
+
+To test the application just install `tox` and run it in the root directory.
+
+####IMPORTANT
+
+`tox` will configure the test environment, if you run the tests not using it
+you can have issues, one of the requirements for example is to have the 
+environment variable `OSTROM_ENV` set to `DEVELOPMENT`
+
 
 ## Experiment the API
 

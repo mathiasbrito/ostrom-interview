@@ -80,6 +80,16 @@ def location_prices() -> List[LocationPrice]:
 
         ),
         LocationPrice(
+            postal_code=1847,
+            city='Eliahscheid',
+            street='Alt Steinbücheler Weg',
+            house_number='100-150',
+            unit_price=4.79,
+            grid_fees=3.19,
+            kwh_price=0.30
+
+        ),
+        LocationPrice(
             postal_code=16932,
             city='Börgelingstadt',
             street='Am Neuenhof',
