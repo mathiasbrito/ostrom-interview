@@ -3,7 +3,6 @@ from fastapi.exceptions import RequestValidationError
 
 from fastapi.testclient import TestClient
 
-from ostrom.domain import Tariff
 from ostrom.routers import tariff_router
 from pytest import fixture
 
@@ -13,7 +12,12 @@ def api_test_client():
     yield TestClient(tariff_router)
 
 
-def test_location_must_be_ignored_if_any_field_is_empty(api_test_client):
+@pytest.mark.parametrize('user_consumption', [
+    ({}), ({'zip_code': 12345}), ({'zip_code': '12345'}, {'zip_code': '12345',  'street': 'some'}),
+    ({'zip_code': 12345, 'street': 'some', 'city': 'some_city', 'house_number': '34'}),
+    ({'zip_code': 12345, 'street': 'some', 'city': 'some_city', 'house_number': '34', 'yearly_kwh_consumption': 'somestr'})
+])
+def test_location_must_be_ignored_if_schema_do_not_match(user_consumption, api_test_client):
     with pytest.raises(RequestValidationError):
         result = api_test_client.post('/tariffs', json={'zip_code': 12345})
         assert result.status_code == 422

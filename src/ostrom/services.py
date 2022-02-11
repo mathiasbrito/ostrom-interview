@@ -148,7 +148,7 @@ class LocationAddressMatchMaker:
         return matches
 
 
-csv_file = os.path.join(os.path.dirname(__file__), 'data/location_prices.csv')
+csv_file = os.path.join(os.path.dirname(__file__), '../../test/location_prices.csv')
 if os.environ.get('OSTROM_ENV', 'DEVELOPMENT'):
     csv_file = os.path.join(os.path.dirname(__file__), 'data/location_prices_small.csv')
 provider_prices_service = ProviderPricesService()

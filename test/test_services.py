@@ -1,3 +1,5 @@
+from unittest.mock import patch, mock_open
+
 from pytest import fixture
 
 from ostrom.services import ProviderPricesService, PriceCalculatorService, LocationAddressMatchMaker, \
@@ -10,15 +12,16 @@ def provider_prices_service():
 
 
 @fixture(scope='function')
-def provider_prices_service_populated(location_prices_small_file_path):
+def provider_prices_service_populated(location_prices_small_file_path, entries_for_testing):
     provider = ProviderPricesService()
-    provider.load_prices_from_csv_local_file(location_prices_small_file_path)
+    with patch('builtins.open', mock_open(read_data=entries_for_testing)):
+        provider.load_prices_from_csv_local_file(location_prices_small_file_path)
     yield provider
 
 
 @fixture(scope='function')
-def price_calculator(provider_prices_service_populated):
-    yield PriceCalculatorService(provider_prices_service_populated)
+def price_calculator(provider_prices_service_populated, entries_for_testing):
+        yield PriceCalculatorService(provider_prices_service_populated)
 
 
 @fixture(scope='function')
@@ -28,9 +31,11 @@ def provider_price_store():
 
 class TestProviderPricesService:
 
-    def test_load_prices_from_csv_local_file(self, provider_prices_service, location_prices_small_file_path):
-        provider_prices_service.load_prices_from_csv_local_file(location_prices_small_file_path)
-        assert provider_prices_service.get_providers_prices().number_of_entries() == 18
+    def test_load_prices_from_csv_local_file(self, provider_prices_service, location_prices_small_file_path,
+                                             entries_for_testing):
+        with patch('builtins.open', mock_open(read_data=entries_for_testing)):
+            provider_prices_service.load_prices_from_csv_local_file(location_prices_small_file_path)
+            assert provider_prices_service.get_providers_prices().number_of_entries() == 18
 
 
 class TestPriceCalculatorService:

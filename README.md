@@ -55,8 +55,26 @@ The solution is based on three pillars, the routers that exposes the API, the se
 the routers and the domain models. The logic resides on the services, while the classes in the domain
 module represents objects from the application domain. No data models are used, since it was not required
 by the problem description.
+
+## The routers
+
+The system offers the `/tariff` router as an entrypoint for the required functionality. By posting at
+this entrypoint, along with the `UserAddress`, the system will return the `Tariff` related to the
+given address. An additional endpoint was offered to insert new `LocationPrices`.
+
+Since the data do not have unique identifiers, it was not possible to design a REST styled api. If they
+were given we could assume some routes like `/tariff/{provider_id}`, or `/user/{user_id}/consuption`. In 
+future versions this could be considered, however it depends also on the structure of the data
+sent by the providers.
     
 ### Technical Decisions
+
+#### Storing location prices
+
+The list of location prices can be long, so a sequential search on the list affects the performance
+drastically. The use of a Hash Table, indexed by the postal code, with separate chaining for handling 
+clashes is a more appropriate solution. A class called `LocationPricesStore` wraps a dictionary 
+to provide the necessary behavior. For this situation only addition of data is allowed.
 
 #### Why Python and FastAPI
 
