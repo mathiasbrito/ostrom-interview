@@ -19,7 +19,7 @@ def api_test_client():
 ])
 def test_location_must_be_ignored_if_schema_do_not_match(user_consumption, api_test_client):
     with pytest.raises(RequestValidationError):
-        result = api_test_client.post('/tariffs', json={'zip_code': 12345})
+        result = api_test_client.post('/tariffs', json=user_consumption)
         assert result.status_code == 422
 
 
